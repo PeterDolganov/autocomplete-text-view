@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Autocomplete text view test" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JYy-6M-vWW">
+                                <rect key="frame" x="0.0" y="40" width="375" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="TNB-el-nUr"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Vbp-vT-wNb" customClass="AutocompleteTextView">
+                                <rect key="frame" x="-0.5" y="71" width="375" height="30"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="M3O-E7-jQy"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yFg-Ba-niL" customClass="AutocompleteTextView">
+                                <rect key="frame" x="20" y="111" width="335" height="30"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="fwF-dm-PU0"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="0.89506802689999998" blue="0.41892168200000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="JYy-6M-vWW" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="32X-fF-cMm"/>
+                            <constraint firstItem="JYy-6M-vWW" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="4Iw-Sr-6tv"/>
+                            <constraint firstItem="Vbp-vT-wNb" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="68H-7Y-oee"/>
+                            <constraint firstItem="Vbp-vT-wNb" firstAttribute="top" secondItem="JYy-6M-vWW" secondAttribute="bottom" constant="10" id="CSh-PP-BNY"/>
+                            <constraint firstItem="yFg-Ba-niL" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Ln6-lh-M4E"/>
+                            <constraint firstItem="yFg-Ba-niL" firstAttribute="top" secondItem="Vbp-vT-wNb" secondAttribute="bottom" constant="10" id="PoX-Gn-6J8"/>
+                            <constraint firstItem="yFg-Ba-niL" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="UMr-ci-zQ0"/>
+                            <constraint firstItem="Vbp-vT-wNb" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="dX2-a8-8bd"/>
+                            <constraint firstItem="JYy-6M-vWW" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="fhg-X8-cV4"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="textView1" destination="Vbp-vT-wNb" id="gQO-0p-fGX"/>
+                        <outlet property="textView1HeightConstr" destination="M3O-E7-jQy" id="qT2-Nv-AiN"/>
+                        <outlet property="textView2" destination="yFg-Ba-niL" id="6OR-vZ-BxU"/>
+                        <outlet property="textView2HeightConstr" destination="fwF-dm-PU0" id="pLk-Dd-Q5j"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="116" y="123.68815592203899"/>
+        </scene>
+    </scenes>
+</document>
