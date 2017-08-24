@@ -8,7 +8,7 @@
 
 #import "AutocompleteTextView.h"
 #import "ContactsDataSource.h"
-#import "NSString+Email.h"
+#import "NSString+Utils.h"
 
 @interface AutocompleteTextView () <UITableViewDelegate, UITableViewDataSource>
 {
@@ -51,6 +51,7 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextViewTextDidChangeNotification object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextViewTextDidEndEditingNotification object:self];
 }
 
 - (void)layoutSubviews
@@ -113,6 +114,7 @@
     self.currentRect = CGRectZero;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewTextDidChange:) name:UITextViewTextDidChangeNotification object:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewTextDidEndEditing:) name:UITextViewTextDidEndEditingNotification object:self];
 }
 
 #pragma mark - Getter and Setter methods
@@ -134,9 +136,7 @@
 - (NSSet *)emailContacts
 {
     NSMutableSet *resultContacts = [NSMutableSet set];
-    NSString *resultString = [self.text removeCommas];
-    resultString = [resultString removeWhiteSpaces];
-    NSArray *words = [resultString componentsSeparatedByCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+    NSArray *words = [self.text wordsFromString];
 
     for (NSString *word in words)
     {
@@ -165,6 +165,14 @@
 
 - (void)textViewTextDidChange:(NSNotification *)notification
 {
+    if ([self.text rangeOfCharacterFromSet:[NSCharacterSet newlineCharacterSet]].location != NSNotFound)
+    {
+        self.text = [self.text removeNewLines];
+        [self resignFirstResponder];
+        [self preventScrollText];
+        return;
+    }
+    
     [self refreshAutocompleteSuggestions];
 
     NSUInteger prevNumberOfLines = self.textViewNumberOfLines;
@@ -200,11 +208,19 @@
     NSLog(@"currentNumberOfLines: %lu", (unsigned long)self.textViewNumberOfLines);
 }
 
+- (void)textViewTextDidEndEditing:(NSNotification *)notification
+{
+    if (self.autocompleteDelegate != nil && [self.autocompleteDelegate respondsToSelector:@selector(autocompleteTextView:didEndEditingWithEmails:)])
+    {
+        [self.autocompleteDelegate autocompleteTextView:self didEndEditingWithEmails:[self emailContacts]];
+    }
+}
+
 - (void)refreshAutocompleteSuggestions
 {
     if (self.autocompleteDataSource != nil && [self.autocompleteDataSource respondsToSelector:@selector(autocompleteTextView:forPrefix:withCompletion:)])
     {
-        UITextRange *textRange = [self leftTextRangeForCurrentlyEditedWord];
+        UITextRange *textRange = [self textRangeForCurrentlyEditedWord];
         NSString *currentWord = [self textInRange:textRange];
         
         [self.autocompleteDataSource autocompleteTextView:self forPrefix:currentWord withCompletion:^(NSArray *suggestions) {
@@ -299,7 +315,7 @@
     return attributedText;
 }
 
-- (UITextRange *)leftTextRangeForCurrentlyEditedWord
+- (UITextRange *)textRangeForCurrentlyEditedWord
 {
     NSRange selectedRange = self.selectedRange;
     UITextPosition *beginning = self.beginningOfDocument;
@@ -312,24 +328,6 @@
     return textRange;
 }
 
-- (UITextRange *)rightTextRangeForCurrentlyEditedWord
-{
-    NSRange selectedRange = self.selectedRange;
-    NSMutableCharacterSet *workingSet = [[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy];
-    
-    NSRange newRange = [self.text rangeOfCharacterFromSet:workingSet options:NSBackwardsSearch range:NSMakeRange(0, (selectedRange.location - 1))];
-    
-    UITextPosition *beginning = self.beginningOfDocument;
-    UITextPosition *start = [self positionFromPosition:beginning offset:selectedRange.location];
-    UITextPosition *end = [self positionFromPosition:beginning offset:newRange.location + 1];
-    UITextRange *textRange = [self textRangeFromPosition:end toPosition:start];
-    
-    NSLog(@"Word that is currently being edited is : %@", [self textInRange:textRange]);
-                              
-    return textRange;
-}
-
-                              
 #pragma mark - Frame Calculations
 
 - (CGRect)calculateTableViewFrameForRows:(NSInteger)rowsNumber
@@ -354,7 +352,6 @@
     {
         number = rowsNumber;
     }
-    
     return self.tableRowHeight * number;
 }
 
@@ -389,7 +386,7 @@
 
     // highlight selected characters
     NSString *contact = [mSuggestions objectAtIndex:indexPath.row];
-    UITextRange *textRange = [self leftTextRangeForCurrentlyEditedWord];
+    UITextRange *textRange = [self textRangeForCurrentlyEditedWord];
     NSString *currentWord = [self textInRange:textRange];
     NSRange boldedRange = [contact rangeOfString:currentWord options:NSCaseInsensitiveSearch | NSDiacriticInsensitiveSearch];
     NSAttributedString *attrString = [self attributedString:contact withRange:boldedRange];
@@ -410,9 +407,7 @@
     UITableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
     NSString *autoCompleteString = selectedCell.textLabel.text;
 
-    UITextRange* leftTextRange = [self leftTextRangeForCurrentlyEditedWord];
-    UITextRange* rightTextRange = [self rightTextRangeForCurrentlyEditedWord];
-    [self replaceRange:rightTextRange withText:@""];
+    UITextRange* leftTextRange = [self textRangeForCurrentlyEditedWord];
     [self replaceRange:leftTextRange withText:autoCompleteString];
     
     [self updateTextForString:self.text];

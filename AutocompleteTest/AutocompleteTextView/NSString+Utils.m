@@ -6,9 +6,9 @@
 //  Copyright © 2017 Peter Dolganov. All rights reserved.
 //
 
-#import "NSString+Email.h"
+#import "NSString+Utils.h"
 
-@implementation NSString (Email)
+@implementation NSString (Utils)
 
 - (BOOL)isValidEmail
 {
@@ -40,6 +40,24 @@
     result = [filteredArray componentsJoinedByString:@" "];
     
     return result;
+}
+
+- (NSString *)removeNewLines
+{
+    NSString *result;
+    
+    NSCharacterSet *newlines = [NSCharacterSet newlineCharacterSet];
+    result = [[self componentsSeparatedByCharactersInSet:newlines] componentsJoinedByString:@""];
+    
+    return result;
+}
+
+- (NSArray *)wordsFromString
+{
+    NSString *resultString = [self removeCommas];
+    NSArray *words = [resultString componentsSeparatedByCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+
+    return words;
 }
 
 @end

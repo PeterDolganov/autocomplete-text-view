@@ -51,4 +51,9 @@
     }
 }
 
+- (void)autocompleteTextView:(AutocompleteTextView *)textView didEndEditingWithEmails:(NSSet *)emails
+{
+    NSLog(@"Emails: %@", emails);
+}
+
 @end

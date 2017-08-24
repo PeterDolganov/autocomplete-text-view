@@ -17,6 +17,9 @@
 - (void)autocompleteTextView:(AutocompleteTextView *)textView
       didChangeNumberOfLines:(NSUInteger)prevNumberOfLines;
 
+- (void)autocompleteTextView:(AutocompleteTextView *)textView
+     didEndEditingWithEmails:(NSSet *)emails;
+
 @end
 
 @protocol AutocompleteTextViewDataSource <NSObject>

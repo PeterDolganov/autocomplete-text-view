@@ -8,11 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSString (Email)
+@interface NSString (Utils)
 
 - (BOOL)isValidEmail;
 
 - (NSString *)removeCommas;
 - (NSString *)removeWhiteSpaces;
+- (NSString *)removeNewLines;
+
+- (NSArray *)wordsFromString;
+
 
 @end

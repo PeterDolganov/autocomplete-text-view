@@ -15,7 +15,7 @@
 		69A76F481F4C10DE00D68152 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 69A76F461F4C10DE00D68152 /* LaunchScreen.storyboard */; };
 		69A76F531F4C116A00D68152 /* AutocompleteTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 69A76F521F4C116A00D68152 /* AutocompleteTextView.m */; };
 		69A76F591F4C918E00D68152 /* ContactsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 69A76F581F4C918E00D68152 /* ContactsDataSource.m */; };
-		69A76F5C1F4CCD9100D68152 /* NSString+Email.m in Sources */ = {isa = PBXBuildFile; fileRef = 69A76F5B1F4CCD9100D68152 /* NSString+Email.m */; };
+		69A76F5C1F4CCD9100D68152 /* NSString+Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 69A76F5B1F4CCD9100D68152 /* NSString+Utils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,8 +33,8 @@
 		69A76F521F4C116A00D68152 /* AutocompleteTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutocompleteTextView.m; sourceTree = "<group>"; };
 		69A76F571F4C918E00D68152 /* ContactsDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactsDataSource.h; sourceTree = "<group>"; };
 		69A76F581F4C918E00D68152 /* ContactsDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactsDataSource.m; sourceTree = "<group>"; };
-		69A76F5A1F4CCD9100D68152 /* NSString+Email.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Email.h"; sourceTree = "<group>"; };
-		69A76F5B1F4CCD9100D68152 /* NSString+Email.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Email.m"; sourceTree = "<group>"; };
+		69A76F5A1F4CCD9100D68152 /* NSString+Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Utils.h"; sourceTree = "<group>"; };
+		69A76F5B1F4CCD9100D68152 /* NSString+Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Utils.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,8 +96,8 @@
 				69A76F581F4C918E00D68152 /* ContactsDataSource.m */,
 				69A76F511F4C116A00D68152 /* AutocompleteTextView.h */,
 				69A76F521F4C116A00D68152 /* AutocompleteTextView.m */,
-				69A76F5A1F4CCD9100D68152 /* NSString+Email.h */,
-				69A76F5B1F4CCD9100D68152 /* NSString+Email.m */,
+				69A76F5A1F4CCD9100D68152 /* NSString+Utils.h */,
+				69A76F5B1F4CCD9100D68152 /* NSString+Utils.m */,
 			);
 			path = AutocompleteTextView;
 			sourceTree = "<group>";
@@ -176,7 +176,7 @@
 			files = (
 				69A76F401F4C10DE00D68152 /* ViewController.m in Sources */,
 				69A76F3D1F4C10DE00D68152 /* AppDelegate.m in Sources */,
-				69A76F5C1F4CCD9100D68152 /* NSString+Email.m in Sources */,
+				69A76F5C1F4CCD9100D68152 /* NSString+Utils.m in Sources */,
 				69A76F3A1F4C10DE00D68152 /* main.m in Sources */,
 				69A76F531F4C116A00D68152 /* AutocompleteTextView.m in Sources */,
 				69A76F591F4C918E00D68152 /* ContactsDataSource.m in Sources */,
@@ -342,6 +342,7 @@
 				69A76F4E1F4C10DE00D68152 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
