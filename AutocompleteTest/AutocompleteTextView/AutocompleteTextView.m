@@ -94,6 +94,7 @@
                                NSFontAttributeName: self.font};
     self.highlightedAttributes = @{NSForegroundColorAttributeName : self.textViewHighlightedTextColor,
                                    NSFontAttributeName: self.font};
+    self.defaultHeight = [self.font lineHeight];
 
     // set table view defaults
     [self setTableCellBackgroundColor:[UIColor clearColor]];
@@ -133,6 +134,12 @@
                                    NSFontAttributeName: self.font};
 }
 
+- (void)setFont:(UIFont *)font
+{
+    super.font = font;
+    self.defaultHeight = [font lineHeight];
+}
+
 - (NSSet *)emailContacts
 {
     NSMutableSet *resultContacts = [NSMutableSet set];
@@ -165,6 +172,7 @@
 
 - (void)textViewTextDidChange:(NSNotification *)notification
 {
+    // handle return key event
     if ([self.text rangeOfCharacterFromSet:[NSCharacterSet newlineCharacterSet]].location != NSNotFound)
     {
         self.text = [self.text removeNewLines];
@@ -173,14 +181,12 @@
         return;
     }
     
-    [self refreshAutocompleteSuggestions];
-
+    // re-calculate frames if needed
     NSUInteger prevNumberOfLines = self.textViewNumberOfLines;
     _textViewNumberOfLines = [self currentNumberOfLines];
-    
     NSRange cursorPosition = [self selectedRange];
     
-    if (prevNumberOfLines != self.textViewNumberOfLines && prevNumberOfLines != 0 && self.textViewNumberOfLines <= self.textViewMaxLineNumber)
+    if (prevNumberOfLines != self.textViewNumberOfLines && prevNumberOfLines > 0 && self.textViewNumberOfLines <= self.textViewMaxLineNumber)
     {
         // change text view size
         CGRect newFrame = self.frame;
@@ -189,7 +195,7 @@
         {
             newFrame.size.height += self.defaultHeight;
         }
-        else
+        else if (prevNumberOfLines <= self.textViewMaxLineNumber)
         {
             newFrame.size.height -= self.defaultHeight;
         }
@@ -201,9 +207,13 @@
             [self.autocompleteDelegate autocompleteTextView:self didChangeNumberOfLines:prevNumberOfLines];
         }
     }
-    
-    [self updateTextForString:self.text];
+
+    // update string in text view
+    [self updateAttributedTextForString:self.text];
     [self setSelectedRange:cursorPosition];
+    
+    // update suggestions if it possible
+    [self refreshAutocompleteSuggestions];
     
     NSLog(@"currentNumberOfLines: %lu", (unsigned long)self.textViewNumberOfLines);
 }
@@ -246,12 +256,11 @@
         // new line reached
         numberOfLines++;
     }
-    else if (newRect.origin.y < self.currentRect.origin.y)
+    else if (newRect.origin.y < self.currentRect.origin.y && numberOfLines > 1)
     {
         // last line removed
         numberOfLines--;
     }
-    self.defaultHeight = newRect.size.height;
     self.currentRect = newRect;
     return numberOfLines;
 }
@@ -265,11 +274,9 @@
     }
 }
 
-- (void)updateTextForString:(NSString *)resultString
+- (void)updateAttributedTextForString:(NSString *)resultString
 {
-    resultString = [resultString removeCommas];
-
-    NSArray *words = [resultString componentsSeparatedByCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+    NSArray *words = [resultString wordsFromString];
     NSAttributedString *attrSpace = [[NSAttributedString alloc] initWithString:@", " attributes:self.defaultAttributes];
     NSMutableAttributedString *attrResultString = [[NSMutableAttributedString alloc] init];
 
@@ -410,7 +417,7 @@
     UITextRange* leftTextRange = [self textRangeForCurrentlyEditedWord];
     [self replaceRange:leftTextRange withText:autoCompleteString];
     
-    [self updateTextForString:self.text];
+    [self updateAttributedTextForString:self.text];
 }
 
 #pragma mark - Show/Hide suggestions table view

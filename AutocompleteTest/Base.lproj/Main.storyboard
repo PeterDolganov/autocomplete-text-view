@@ -31,16 +31,16 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Vbp-vT-wNb" customClass="AutocompleteTextView">
-                                <rect key="frame" x="-0.5" y="71" width="375" height="30"/>
+                                <rect key="frame" x="-0.5" y="71" width="375" height="40"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="M3O-E7-jQy"/>
+                                    <constraint firstAttribute="height" constant="40" id="M3O-E7-jQy"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yFg-Ba-niL" customClass="AutocompleteTextView">
-                                <rect key="frame" x="20" y="111" width="335" height="30"/>
+                                <rect key="frame" x="20" y="121" width="335" height="30"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="fwF-dm-PU0"/>

@@ -1,5 +1,5 @@
 //
-//  NSString+Email.h
+//  NSString+Utils.h
 //  AutocompleteTest
 //
 //  Created by Peter Dolganov on 22/08/2017.

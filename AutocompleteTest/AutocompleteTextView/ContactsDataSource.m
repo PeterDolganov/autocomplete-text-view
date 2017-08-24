@@ -24,9 +24,9 @@
     
     if (self)
     {
-        // stub logic
+        // stubs logic
         mContacts = [[NSMutableArray alloc] initWithObjects:
-                     @"alexey_petuhov@mail.ru",
+                     @"alexey.petuhov@mail.ru",
                      @"alexander.muhin@ya.ru",
                      @"andrey.kruglov@gmail.com",
                      @"anatoly.ivanov@mail.ru",
@@ -38,9 +38,12 @@
                      @"peter.dolganov@gmail.com",
                      @"sergey@rambler.ru",
                      @"vasya.pupkin@gmail.com",
-                     @"victor_aaa@yandex.ru", nil];
+                     @"vasiliy.ryabov@gmail.com",
+                     @"victor.sitnev@yandex.ru",
+                     @"vladimir.romanov@mail.ru",
+                     nil];
 
-        // loading contacts from address book or extracting saved in app contacts should be implemented here
+        // load contacts from address book or extract saved in app contacts here
     }
     return self;
 }
