@@ -151,31 +151,9 @@
     }
     
     // re-calculate frames if needed
-    NSUInteger prevNumberOfLines = self.textViewCurrentNumberOfLines;
-    _textViewCurrentNumberOfLines = [self currentNumberOfLines];
     NSRange cursorPosition = [self selectedRange];
-    
-    if (prevNumberOfLines != self.textViewCurrentNumberOfLines && prevNumberOfLines > 0 && self.textViewCurrentNumberOfLines <= self.textViewMaxNumberOfLines)
-    {
-        // change text view size
-        CGRect newFrame = self.frame;
-        
-        if (prevNumberOfLines < self.textViewCurrentNumberOfLines)
-        {
-            newFrame.size.height += self.defaultHeight;
-        }
-        else if (prevNumberOfLines <= self.textViewMaxNumberOfLines)
-        {
-            newFrame.size.height -= self.defaultHeight;
-        }
-        [self setFrame:newFrame];
-        [self preventScrollText];
-        
-        if (self.autocompleteDelegate && [self.autocompleteDelegate respondsToSelector:@selector(autocompleteTextView: didChangeNumberOfLines:)])
-        {
-            [self.autocompleteDelegate autocompleteTextView:self didChangeNumberOfLines:prevNumberOfLines];
-        }
-    }
+
+    [self updateHigthIfNeeded];
 
     // update string in text view
     [self updateAttributedTextForString:self.text force:NO];
@@ -215,26 +193,6 @@
 }
 
 #pragma mark - Text calculations
-
-- (NSUInteger)currentNumberOfLines
-{
-    NSUInteger numberOfLines = self.textViewCurrentNumberOfLines;
-    UITextPosition *pos = self.endOfDocument;
-    CGRect newRect = [self caretRectForPosition:pos];
-    
-    if (newRect.origin.y > self.currentRect.origin.y)
-    {
-        // new line reached
-        numberOfLines++;
-    }
-    else if (newRect.origin.y < self.currentRect.origin.y && numberOfLines > 1)
-    {
-        // last line removed
-        numberOfLines--;
-    }
-    self.currentRect = newRect;
-    return numberOfLines;
-}
 
 - (void)preventScrollText
 {
@@ -322,6 +280,54 @@
 
 #pragma mark - Frame Calculations
 
+- (NSUInteger)currentNumberOfLines
+{
+    NSUInteger numberOfLines = self.textViewCurrentNumberOfLines;
+    UITextPosition *pos = self.endOfDocument;
+    CGRect newRect = [self caretRectForPosition:pos];
+    
+    if (newRect.origin.y > self.currentRect.origin.y)
+    {
+        // new line reached
+        numberOfLines++;
+    }
+    else if (newRect.origin.y < self.currentRect.origin.y && numberOfLines > 1)
+    {
+        // last line removed
+        numberOfLines--;
+    }
+    self.currentRect = newRect;
+    return numberOfLines;
+}
+
+- (void)updateHigthIfNeeded
+{
+    NSUInteger prevNumberOfLines = self.textViewCurrentNumberOfLines;
+    _textViewCurrentNumberOfLines = [self currentNumberOfLines];
+    
+    if (prevNumberOfLines != self.textViewCurrentNumberOfLines && prevNumberOfLines > 0 && self.textViewCurrentNumberOfLines <= self.textViewMaxNumberOfLines)
+    {
+        // change text view size
+        CGRect newFrame = self.frame;
+        
+        if (prevNumberOfLines < self.textViewCurrentNumberOfLines)
+        {
+            newFrame.size.height += self.defaultHeight;
+        }
+        else if (prevNumberOfLines <= self.textViewMaxNumberOfLines)
+        {
+            newFrame.size.height -= self.defaultHeight;
+        }
+        [self setFrame:newFrame];
+        [self preventScrollText];
+        
+        if (self.autocompleteDelegate && [self.autocompleteDelegate respondsToSelector:@selector(autocompleteTextView: didChangeNumberOfLines:)])
+        {
+            [self.autocompleteDelegate autocompleteTextView:self didChangeNumberOfLines:prevNumberOfLines];
+        }
+    }
+}
+
 - (CGRect)calculateTableViewFrameForRows:(NSInteger)rowsNumber
 {
     CGRect frame = self.frame;
@@ -406,12 +412,9 @@
     
     self.text = [self.text stringByReplacingCharactersInRange:rangeOfEditedWord withString:autoCompleteString];
     
-//    UITextRange* textRange = [self textRangeForCurrentlyEditedWord];
-//    [self replaceRange:textRange withText:autoCompleteString];
-    
     [self updateAttributedTextForString:self.text force:YES];
     [self hideSuggestionsTableView];
-    [self textViewTextDidChange:nil];
+    [self updateHigthIfNeeded];
 }
 
 #pragma mark - Show/Hide suggestions table view
