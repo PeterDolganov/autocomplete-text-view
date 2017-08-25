@@ -22,9 +22,6 @@
 @property (assign) CGRect currentRect;
 @property (assign) CGFloat defaultHeight;
 
-@property (strong) NSDictionary *defaultAttributes;
-@property (strong) NSDictionary *highlightedAttributes;
-
 @end
 
 @implementation AutocompleteTextView
@@ -65,7 +62,7 @@
 
 - (void)setupAutocompleteTextView
 {
-    // setup data source provide
+    // setup data source provider
     ContactsDataSource *contactsDataSource = [ContactsDataSource sharedInstance];
     self.autocompleteDataSource = contactsDataSource;
     
@@ -84,26 +81,20 @@
     [self setFont:[UIFont systemFontOfSize:16]];
     self.layer.borderColor = [UIColor lightGrayColor].CGColor;
     self.layer.borderWidth = 0.5f;
-    self.textViewMaxLineNumber = 4;
-    _textViewNumberOfLines = 0;
-    [self setDefaultHeight:self.frame.size.height];
+    _textViewCurrentNumberOfLines = 0;
+    [self setTextViewMaxNumberOfLines:4];
     [self setTextViewTextColor:[UIColor blackColor]];
-    [self setTextViewHighlightedTextColor:[UIColor blueColor]];
-
-    self.defaultAttributes = @{NSForegroundColorAttributeName : self.textViewTextColor,
-                               NSFontAttributeName: self.font};
-    self.highlightedAttributes = @{NSForegroundColorAttributeName : self.textViewHighlightedTextColor,
-                                   NSFontAttributeName: self.font};
-    self.defaultHeight = [self.font lineHeight];
+    [self setTextViewHighlightedTextColor:self.tintColor];
+    [self setDefaultHeight:[self.font lineHeight]];
 
     // set table view defaults
     [self setTableCellBackgroundColor:[UIColor clearColor]];
     [self setTableBackgroundColor:[UIColor whiteColor]];
-    [self setTableBorderColor:[UIColor clearColor]];
-    [self setTableBorderWidth:0];
+    [self setTableTextColor:[UIColor darkGrayColor]];
+    [self setTableHighlightedTextColor:[UIColor blackColor]];
     [self setTableRowHeight:40];
     [self setTableFontSize:16];
-    [self setTableMaxRowsNumber:4];
+    [self setTableMaxNumberOfRows:4];
     
     // initialization
     CGRect frame = [self calculateTableViewFrameForRows:0];
@@ -116,28 +107,6 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewTextDidChange:) name:UITextViewTextDidChangeNotification object:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewTextDidEndEditing:) name:UITextViewTextDidEndEditingNotification object:self];
-}
-
-#pragma mark - Getter and Setter methods
-
-- (void)setTextViewTextColor:(UIColor *)textViewTextColor
-{
-    _textViewTextColor = textViewTextColor;
-    self.defaultAttributes = @{NSForegroundColorAttributeName : self.textViewTextColor,
-                               NSFontAttributeName: self.font};
-}
-
-- (void)setTextViewHighlightedTextColor:(UIColor *)textViewHighlightedTextColor
-{
-    _textViewHighlightedTextColor = textViewHighlightedTextColor;
-    self.highlightedAttributes = @{NSForegroundColorAttributeName : self.textViewHighlightedTextColor,
-                                   NSFontAttributeName: self.font};
-}
-
-- (void)setFont:(UIFont *)font
-{
-    super.font = font;
-    self.defaultHeight = [font lineHeight];
 }
 
 - (NSSet *)emailContacts
@@ -182,20 +151,20 @@
     }
     
     // re-calculate frames if needed
-    NSUInteger prevNumberOfLines = self.textViewNumberOfLines;
-    _textViewNumberOfLines = [self currentNumberOfLines];
+    NSUInteger prevNumberOfLines = self.textViewCurrentNumberOfLines;
+    _textViewCurrentNumberOfLines = [self currentNumberOfLines];
     NSRange cursorPosition = [self selectedRange];
     
-    if (prevNumberOfLines != self.textViewNumberOfLines && prevNumberOfLines > 0 && self.textViewNumberOfLines <= self.textViewMaxLineNumber)
+    if (prevNumberOfLines != self.textViewCurrentNumberOfLines && prevNumberOfLines > 0 && self.textViewCurrentNumberOfLines <= self.textViewMaxNumberOfLines)
     {
         // change text view size
         CGRect newFrame = self.frame;
         
-        if (prevNumberOfLines < self.textViewNumberOfLines)
+        if (prevNumberOfLines < self.textViewCurrentNumberOfLines)
         {
             newFrame.size.height += self.defaultHeight;
         }
-        else if (prevNumberOfLines <= self.textViewMaxLineNumber)
+        else if (prevNumberOfLines <= self.textViewMaxNumberOfLines)
         {
             newFrame.size.height -= self.defaultHeight;
         }
@@ -209,17 +178,19 @@
     }
 
     // update string in text view
-    [self updateAttributedTextForString:self.text];
+    [self updateAttributedTextForString:self.text force:NO];
     [self setSelectedRange:cursorPosition];
     
     // update suggestions if it possible
     [self refreshAutocompleteSuggestions];
     
-    NSLog(@"currentNumberOfLines: %lu", (unsigned long)self.textViewNumberOfLines);
+//    NSLog(@"currentNumberOfLines: %lu", (unsigned long)self.textViewNumberOfLines);
 }
 
 - (void)textViewTextDidEndEditing:(NSNotification *)notification
 {
+    [self updateAttributedTextForString:self.text force:YES];
+
     if (self.autocompleteDelegate != nil && [self.autocompleteDelegate respondsToSelector:@selector(autocompleteTextView:didEndEditingWithEmails:)])
     {
         [self.autocompleteDelegate autocompleteTextView:self didEndEditingWithEmails:[self emailContacts]];
@@ -238,7 +209,7 @@
             mSuggestions = suggestions;
             [mTableView reloadData];
             
-            NSLog(@"Suggestions: %@", suggestions);
+//            NSLog(@"Suggestions: %@", suggestions);
         }];
     }
 }
@@ -247,7 +218,7 @@
 
 - (NSUInteger)currentNumberOfLines
 {
-    NSUInteger numberOfLines = self.textViewNumberOfLines;
+    NSUInteger numberOfLines = self.textViewCurrentNumberOfLines;
     UITextPosition *pos = self.endOfDocument;
     CGRect newRect = [self caretRectForPosition:pos];
     
@@ -267,17 +238,27 @@
 
 - (void)preventScrollText
 {
-    if (self.textViewNumberOfLines <= self.textViewMaxLineNumber)
+    if (self.textViewCurrentNumberOfLines <= self.textViewMaxNumberOfLines)
     {
         // prevent scrolling text for this case
         [self scrollRangeToVisible:NSMakeRange(0, 0)];
     }
 }
 
-- (void)updateAttributedTextForString:(NSString *)resultString
+- (void)updateAttributedTextForString:(NSString *)resultString force:(BOOL)force
 {
+    if (force)
+    {
+        resultString = [resultString removeWhiteSpaces];
+        resultString = [resultString removeDuplicateWords];
+    }
     NSArray *words = [resultString wordsFromString];
-    NSAttributedString *attrSpace = [[NSAttributedString alloc] initWithString:@", " attributes:self.defaultAttributes];
+    NSDictionary *defaultAttributes = @{NSForegroundColorAttributeName : self.textViewTextColor,
+                                                    NSFontAttributeName: self.font};
+    NSDictionary *highlightedAttributes = @{NSForegroundColorAttributeName : self.textViewHighlightedTextColor,
+                                                        NSFontAttributeName: self.font};
+    NSAttributedString *attrComma = [[NSAttributedString alloc] initWithString:@"," attributes:defaultAttributes];
+    NSAttributedString *attrSpace = [[NSAttributedString alloc] initWithString:@" " attributes:defaultAttributes];
     NSMutableAttributedString *attrResultString = [[NSMutableAttributedString alloc] init];
 
     for (int i = 0; i < words.count; i++)
@@ -287,17 +268,21 @@
 
         if ([word isValidEmail])
         {
-            attrWord = [[NSAttributedString alloc] initWithString:word attributes:self.highlightedAttributes];
+            attrWord = [[NSAttributedString alloc] initWithString:word attributes:highlightedAttributes];
         }
         else
         {
-            attrWord = [[NSAttributedString alloc] initWithString:word attributes:self.defaultAttributes];
+            attrWord = [[NSAttributedString alloc] initWithString:word attributes:defaultAttributes];
         }
 
         [attrResultString appendAttributedString:attrWord];
 
-        if (!(i == words.count - 1 && ![word isValidEmail]) && ![word isEqualToString:@""])
+        if (![word isEqualToString:@""])
         {
+            if ([word isValidEmail])
+            {
+                [attrResultString appendAttributedString:attrComma];
+            }
             [attrResultString appendAttributedString:attrSpace];
         }
     }
@@ -312,9 +297,9 @@
     UIFont *regularFont = [UIFont systemFontOfSize:self.tableFontSize];
     
     NSDictionary *boldTextAttributes = @{NSFontAttributeName : boldFont,
-                                         NSForegroundColorAttributeName : [UIColor blackColor]};
+                                         NSForegroundColorAttributeName : self.tableHighlightedTextColor};
     NSDictionary *regularTextAttributes = @{NSFontAttributeName : regularFont,
-                                            NSForegroundColorAttributeName : [UIColor darkGrayColor]};
+                                            NSForegroundColorAttributeName : self.tableTextColor};
     
     NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:string attributes:regularTextAttributes];
     [attributedText setAttributes:boldTextAttributes range:boldRange];
@@ -330,7 +315,7 @@
     UITextPosition *end = [self positionFromPosition:start offset:selectedRange.length];
     UITextRange *textRange = [self.tokenizer rangeEnclosingPosition:end withGranularity:UITextGranularityWord inDirection:UITextLayoutDirectionLeft];
     
-    NSLog(@"Word that is currently being edited is : %@", [self textInRange:textRange]);
+//    NSLog(@"Word that is currently being edited is : %@", [self textInRange:textRange]);
     
     return textRange;
 }
@@ -351,9 +336,9 @@
 {
     NSUInteger number;
 
-    if (rowsNumber >= self.tableMaxRowsNumber)
+    if (rowsNumber >= self.tableMaxNumberOfRows)
     {
-        number = self.tableMaxRowsNumber;
+        number = self.tableMaxNumberOfRows;
     }
     else
     {
@@ -414,10 +399,19 @@
     UITableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
     NSString *autoCompleteString = selectedCell.textLabel.text;
 
-    UITextRange* leftTextRange = [self textRangeForCurrentlyEditedWord];
-    [self replaceRange:leftTextRange withText:autoCompleteString];
+    NSRange selectedRange = self.selectedRange;
+    NSRange rangeOfEditedWord = [self.text wordRangeForRangePosition:selectedRange.location];
     
-    [self updateAttributedTextForString:self.text];
+//    NSLog(@"Full word to replace: %@", [self.text substringWithRange:rangeOfEditedWord]);
+    
+    self.text = [self.text stringByReplacingCharactersInRange:rangeOfEditedWord withString:autoCompleteString];
+    
+//    UITextRange* textRange = [self textRangeForCurrentlyEditedWord];
+//    [self replaceRange:textRange withText:autoCompleteString];
+    
+    [self updateAttributedTextForString:self.text force:YES];
+    [self hideSuggestionsTableView];
+    [self textViewTextDidChange:nil];
 }
 
 #pragma mark - Show/Hide suggestions table view

@@ -32,6 +32,17 @@
     self.textView2.autocompleteDelegate = self;
 
     // developer can set text view properties and autocomplete table view properties here
+
+    self.textView2.textViewTextColor = [UIColor redColor];
+    self.textView2.textViewHighlightedTextColor = [UIColor greenColor];
+    self.textView2.textViewMaxNumberOfLines = 5;
+    self.textView2.font = [UIFont systemFontOfSize:14];
+    self.textView2.tableTextColor = [UIColor blueColor];
+    self.textView2.tableHighlightedTextColor = [UIColor orangeColor];
+    self.textView2.tableCellBackgroundColor = [UIColor lightGrayColor];
+    self.textView2.tableMaxNumberOfRows = 6;
+    self.textView2.tableRowHeight = 30;
+    self.textView2.tableFontSize = 14;
 }
 
 #pragma mark - AutocompleteTextViewDelegate methods
@@ -39,7 +50,7 @@
 - (void)autocompleteTextView:(AutocompleteTextView *)textView didChangeNumberOfLines:(NSUInteger)prevNumberOfLines
 {
     // Some UI updates (control alignments) may be implemented here.
-    // The current number of lines can be get from textView.textViewNumberOfLines
+    // The current number of lines can be get from textView.textViewCurrentNumberOfLines
     
     if (textView == self.textView1)
     {
@@ -54,6 +65,8 @@
 - (void)autocompleteTextView:(AutocompleteTextView *)textView didEndEditingWithEmails:(NSSet *)emails
 {
     NSLog(@"Emails: %@", emails);
+    
+    // use emails array here or get it later using textView.emailContacts property
 }
 
 @end

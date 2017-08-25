@@ -44,11 +44,11 @@
 /*
  * Text view extended maximum line number, default is 4
  */
-@property (nonatomic, assign) NSUInteger textViewMaxLineNumber;
+@property (nonatomic, assign) NSUInteger textViewMaxNumberOfLines;
 /*
  * Current number of lines in text view
  */
-@property (nonatomic, assign, readonly) NSUInteger textViewNumberOfLines;
+@property (nonatomic, assign, readonly) NSUInteger textViewCurrentNumberOfLines;
 /*
  * Color for highlighted emails, default is [UIColor blueColor]
  */
@@ -72,23 +72,19 @@
 /*
  * Autocomplete table view text color, default is [UIColor blackColor]
  */
+@property (nonatomic, strong) UIColor *tableHighlightedTextColor;
+/*
+ * Autocomplete table view text color, default is [UIColor darkGrayColor]
+ */
 @property (nonatomic, strong) UIColor *tableTextColor;
 /*
  * Autocomplete table view font size, default is 16
  */
 @property (nonatomic, assign) CGFloat tableFontSize;
 /*
- * Autocomplete table view border color, default is [UIColor lightGrayColor]
- */
-@property (nonatomic, strong) UIColor *tableBorderColor;
-/*
- * Autocomplete table view border width, default is 0.5
- */
-@property (nonatomic, assign) CGFloat tableBorderWidth;
-/*
  * Autocomplete table view maximum rows number, default is 4
  */
-@property (nonatomic, assign) NSUInteger tableMaxRowsNumber;
+@property (nonatomic, assign) NSUInteger tableMaxNumberOfRows;
 /*
  * Autocomplete table view row height, default is 40
  */

@@ -15,8 +15,9 @@
 - (NSString *)removeCommas;
 - (NSString *)removeWhiteSpaces;
 - (NSString *)removeNewLines;
+- (NSString *)removeDuplicateWords;
 
 - (NSArray *)wordsFromString;
-
+- (NSRange)wordRangeForRangePosition:(NSUInteger)position;
 
 @end
