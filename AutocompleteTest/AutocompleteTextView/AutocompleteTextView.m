@@ -406,7 +406,7 @@
     NSString *autoCompleteString = selectedCell.textLabel.text;
 
     NSRange selectedRange = self.selectedRange;
-    NSRange rangeOfEditedWord = [self.text wordRangeForRangePosition:selectedRange.location];
+    NSRange rangeOfEditedWord = [self.text wordRangeForRangePosition:selectedRange.location - 1];
     
 //    NSLog(@"Full word to replace: %@", [self.text substringWithRange:rangeOfEditedWord]);
     
