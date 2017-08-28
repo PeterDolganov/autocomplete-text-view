@@ -18,6 +18,8 @@
 - (NSString *)removeDuplicateWords;
 
 - (NSArray *)wordsFromString;
+
 - (NSRange)wordRangeForRangePosition:(NSUInteger)position;
+- (BOOL)rangeExists:(NSRange)range;
 
 @end

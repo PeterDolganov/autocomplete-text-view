@@ -105,4 +105,9 @@
     return range;
 }
 
+- (BOOL)rangeExists:(NSRange)range
+{
+    return range.location != NSNotFound && range.location + range.length <= self.length;
+}
+
 @end

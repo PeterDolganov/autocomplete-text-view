@@ -150,13 +150,14 @@
         return;
     }
     
-    // re-calculate frames if needed
     NSRange cursorPosition = [self selectedRange];
 
+    // re-calculate frames if needed
     [self updateHigthIfNeeded];
 
     // update string in text view
     [self updateAttributedTextForString:self.text force:NO];
+
     [self setSelectedRange:cursorPosition];
     
     // update suggestions if it possible
@@ -235,7 +236,7 @@
 
         [attrResultString appendAttributedString:attrWord];
 
-        if (![word isEqualToString:@""])
+        if (![word isEqualToString:@" "])
         {
             if ([word isValidEmail])
             {
@@ -409,8 +410,11 @@
     NSRange rangeOfEditedWord = [self.text wordRangeForRangePosition:selectedRange.location - 1];
     
 //    NSLog(@"Full word to replace: %@", [self.text substringWithRange:rangeOfEditedWord]);
-    
-    self.text = [self.text stringByReplacingCharactersInRange:rangeOfEditedWord withString:autoCompleteString];
+
+    if ([self.text rangeExists:rangeOfEditedWord])
+    {
+        self.text = [self.text stringByReplacingCharactersInRange:rangeOfEditedWord withString:autoCompleteString];
+    }
     
     [self updateAttributedTextForString:self.text force:YES];
     [self hideSuggestionsTableView];
