@@ -9,9 +9,9 @@
 #import "ContactsDataSource.h"
 
 @interface ContactsDataSource ()
-{
-    NSMutableArray<NSString *> *mContacts;
-}
+
+@property (nonatomic, strong) NSMutableArray<NSString *> *contacts;
+
 @end
 
 @implementation ContactsDataSource
@@ -25,26 +25,25 @@
     if (self)
     {
         // stubs contacts
-        mContacts = [[NSMutableArray alloc] initWithObjects:
+        _contacts = [[NSMutableArray alloc] initWithObjects:
                      @"alexander.muhin@ya.ru",
                      @"alexey.petuhov@mail.ru",
                      @"andrey.kruglov@gmail.com",
                      @"anatoly.ivanov@mail.ru",
                      @"anton_shipulin@rampler.ru",
-                     @"artem.bazarkin@gmail.com",
-                     @"artem.semenov@freeconferencecall.com",
+                     @"artem.noskov@gmail.com",
+                     @"artem.velikanov@yahoo.com",
                      @"boris_borisov@mail.ru",
-                     @"dmitry.lyzlov@freeconferencecall.com",
+                     @"dmitry.sidorov@gmail.com",
                      @"denis.petrov@gmail.com",
-                     @"ilya.ustinov@freeconferencecall.com",
+                     @"ilya.ustinov@rambler.ru",
                      @"igor.novikov@yandex.ru",
-                     @"nikolay.pankin@freeconferencecall.com",
                      @"nikolay_kruglov@mail.ru",
                      @"pavel123@ya.ru",
                      @"peter.dolganov@gmail.com",
                      @"sergey@rambler.ru",
                      @"vasya.pupkin@gmail.com",
-                     @"vasiliy.ryabov@gmail.com",
+                     @"vasiliy.ribakov@gmail.com",
                      @"victor.sitnev@yandex.ru",
                      @"vladimir.romanov@mail.ru",
                      nil];
@@ -64,19 +63,6 @@
         sharedMgr = [[ContactsDataSource alloc] initPrivate];
     });
     return sharedMgr;
-}
-
-- (NSArray *)contacts
-{
-    return mContacts;
-}
-
-- (void)addContact:(NSString *)email
-{
-    if (![mContacts containsObject:email])
-    {
-        [mContacts addObject:email];
-    }
 }
 
 - (NSArray *)suggestionsForPrefix:(NSString *)prefix

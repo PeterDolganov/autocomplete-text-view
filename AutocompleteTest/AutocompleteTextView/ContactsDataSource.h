@@ -13,8 +13,4 @@
 
 + (ContactsDataSource *)sharedInstance;
 
-- (NSArray*)contacts;
-
-- (void)addContact:(NSString *)email;
-
 @end

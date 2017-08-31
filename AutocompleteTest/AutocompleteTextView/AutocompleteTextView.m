@@ -99,6 +99,7 @@
     // initialization
     CGRect frame = [self calculateTableViewFrameForRows:0];
     mTableView = [[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain];
+    mTableView.showsVerticalScrollIndicator = YES;
     mTableView.delegate = self;
     mTableView.dataSource = self;
     
@@ -236,7 +237,7 @@
 
         [attrResultString appendAttributedString:attrWord];
 
-        if (![word isEqualToString:@" "])
+        if (![word isEqualToString:@" "] && ![word isEqualToString:@""])
         {
             if ([word isValidEmail])
             {
@@ -342,16 +343,18 @@
 - (CGFloat)calculateTableViewHeightForRows:(NSInteger)rowsNumber
 {
     NSUInteger number;
+    NSUInteger additionalHeight = 0; // to see that table may be scrolled
 
-    if (rowsNumber >= self.tableMaxNumberOfRows)
+    if (rowsNumber > self.tableMaxNumberOfRows)
     {
         number = self.tableMaxNumberOfRows;
+        additionalHeight = self.tableRowHeight/2;
     }
     else
     {
         number = rowsNumber;
     }
-    return self.tableRowHeight * number;
+    return self.tableRowHeight * number + additionalHeight;
 }
 
 #pragma mark - UITableViewDelegate, UITableViewDataSource methods

@@ -35,12 +35,12 @@
 
     self.textView2.textViewTextColor = [UIColor redColor];
     self.textView2.textViewHighlightedTextColor = [UIColor greenColor];
-    self.textView2.textViewMaxNumberOfLines = 5;
+    self.textView2.textViewMaxNumberOfLines = 3;
     self.textView2.font = [UIFont systemFontOfSize:14];
     self.textView2.tableTextColor = [UIColor blueColor];
     self.textView2.tableHighlightedTextColor = [UIColor orangeColor];
     self.textView2.tableCellBackgroundColor = [UIColor lightGrayColor];
-    self.textView2.tableMaxNumberOfRows = 6;
+    self.textView2.tableMaxNumberOfRows = 3;
     self.textView2.tableRowHeight = 30;
     self.textView2.tableFontSize = 14;
 }
